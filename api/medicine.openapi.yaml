@@ -1,0 +1,479 @@
+openapi: 3.0.0
+servers:
+  - description: Cluster Endpoint
+    url: /api
+info:
+  description: Medicine inventory management for Web-In-Cloud system
+  version: "1.0.0"
+  title: Medicine Inventory API
+  contact:
+    email: your_email@stuba.sk
+  license:
+    name: CC BY 4.0
+    url: "https://creativecommons.org/licenses/by/4.0/"
+tags:
+  - name: medicineInventory
+    description: Medicine Inventory API
+  - name: medicineOrder
+    description: Medicine Order API
+  - name: orderStatuses
+    description: Medicine order statuses
+paths:
+  "/medicine-inventory/{ambulanceId}/entries":
+    get:
+      tags:
+        - medicineInventory
+      summary: Provides the ambulance medicine inventory
+      operationId: getMedicineInventoryEntries
+      description: By using ambulanceId you get list of entries in ambulance medicine inventory
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the medicine inventory entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MedicineInventoryEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineInventoryEntriesExample"
+        "404":
+          description: Ambulance with such ID does not exist
+  "/medicine-inventory/{ambulanceId}/entries/{entryId}":
+    get:
+      tags:
+        - medicineInventory
+      summary: Provides details about ambulance medicine inventory entry
+      operationId: getMedicineInventoryEntry
+      description: >-
+        By using ambulanceId and entryId you can details of particular entry
+        ambulance medicine inventory.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the medicine inventory
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the medicine inventory entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineInventoryEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineInventoryEntryExample"
+        "404":
+          description: Ambulance or Entry with such ID does not exists
+    put:
+      tags:
+        - medicineInventory
+      summary: Updates specific entry
+      operationId: updateMedicineInventoryEntry
+      description: Use this method to update content of the medicine inventory entry.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the medicine inventory
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicineInventoryEntry"
+            examples:
+              request:
+                $ref: "#/components/examples/MedicineInventoryEntryExample"
+        description: Medicine inventory entry to update
+        required: true
+      responses:
+        "200":
+          description: >-
+            value of the medicine inventory entry with update count
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineInventoryEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineInventoryEntryExample"
+        "403":
+          description: >-
+            Value of the entryID and the data id is mismatching. Details are
+            provided in the response body.
+        "404":
+          description: Ambulance or Entry with such ID does not exists
+    delete:
+      tags:
+        - medicineInventory
+      summary: Deletes specific entry
+      operationId: deleteMedicineInventoryEntry
+      description: Use this method to delete the specific entry from the medicine inventory.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the medicine inventory
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: Ambulance or Entry with such ID does not exists
+  "/medicine-order/{ambulanceId}/entries":
+    get:
+      tags:
+        - medicineOrder
+      summary: Provides orders of the ambulance
+      operationId: getMedicineOrderEntries
+      description: By using ambulanceId you get list of orders for the given ambulance
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the medicine order entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MedicineOrderEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineOrderEntriesExample"
+        "404":
+          description: Ambulance with such ID does not exist
+    post:
+      tags:
+        - medicineOrder
+      summary: Saves new entry into medicine order
+      operationId: createMedicineOrderEntry
+      description: Use this method to store new entry into the medicine order list.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicineOrderEntry"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/MedicineOrderEntryExample"
+        description: Medicine order entry to store
+        required: true
+      responses:
+        "200":
+          description: >-
+            Value of the medicine order entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineOrderEntry"
+              examples:
+                updated-response:
+                  $ref: "#/components/examples/MedicineOrderEntryExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "404":
+          description: Ambulance with such ID does not exists
+        "409":
+          description: Entry with the specified id already exists
+  "/medicine-order/{ambulanceId}/entries/{entryId}":
+    get:
+      tags:
+        - medicineOrder
+      summary: Provides details about ambulance medicine order entry
+      operationId: getMedicineOrderEntry
+      description: >-
+        By using ambulanceId and entryId you can details of particular entry
+        ambulance medicine order.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the medicine order
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the medicine inventory entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineOrderEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineOrderEntryExample"
+        "404":
+          description: Ambulance or Entry with such ID does not exists
+    put:
+      tags:
+        - medicineOrder
+      summary: Updates specific entry
+      operationId: updateMedicineOrderEntry
+      description: Use this method to update content of the medicine order entry.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the medicine order
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicineOrderEntry"
+            examples:
+              request:
+                $ref: "#/components/examples/MedicineOrderEntryExample"
+        description: Medicine order entry to update
+        required: true
+      responses:
+        "200":
+          description: >-
+            value of the medicine order entry with updated content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineOrderEntry"
+              examples:
+                response:
+                  $ref: "#/components/examples/MedicineOrderEntryExample"
+        "403":
+          description: >-
+            Value of the entryID and the data id is mismatching. Details are
+            provided in the response body.
+        "404":
+          description: Ambulance or Entry with such ID does not exists
+    delete:
+      tags:
+        - medicineOrder
+      summary: Deletes specific entry
+      operationId: deleteMedicineOrderEntry
+      description: Use this method to delete the specific entry from the medicine orders.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: entryId
+          description: pass the id of the particular entry in the medicine inventory
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: Ambulance or Entry with such ID does not exists
+  "/medicine-order/statuses":
+    get:
+      tags:
+        - orderStatuses
+      summary: Provides the list of valid statuses for the order
+      operationId: getStatuses
+      description: Get list of predefined order statuses
+      responses:
+        "200":
+          description: value of the predefined statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+              examples:
+                response:
+                  $ref: "#/components/examples/StatusListExample"
+components:
+  schemas:
+    MedicineInventoryEntry:
+      type: object
+      required: [ id, medicineId, count ]
+      properties:
+        id:
+          type: string
+          example: x321ab3
+          description: Unique id of the entry in this medicine inventory
+        name:
+          type: string
+          example: Paralen
+          description: Name of medicine in medicine inventory
+        medicineId:
+          type: string
+          example: 460527-paralen
+          description: Unique identifier of the medicine known to Web-In-Cloud system
+        count:
+          type: integer
+          format: int32
+          example: 15
+          description: >-
+            Medicine count in the ambulance medicine inventory.
+            It is a number of packages in the medicine inventory for the given ambulance.
+      example:
+        $ref: "#/components/examples/MedicineInventoryEntriesExample"
+    MedicineOrderEntry:
+      type: object
+      required: [ id, medicineId, count, status ]
+      properties:
+        id:
+          type: string
+          example: x321ab3
+          description: Unique id of the entry in this medicine inventory
+        name:
+          type: string
+          example: Paralen
+          description: Name of medicine in medicine inventory
+        medicineId:
+          type: string
+          example: 460527-paralen
+          description: Unique identifier of the medicine known to Web-In-Cloud system
+        count:
+          type: integer
+          format: int32
+          example: 15
+          description: >-
+            Medicine count in the ambulance medicine inventory.
+            It is a number of packages in the medicine inventory for the given ambulance.
+        status:
+          $ref: "#/components/schemas/Status"
+      example:
+        $ref: "#/components/examples/MedicineOrderEntryExample"
+    Status:
+      description: "Describes status order"
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          example: Shipped
+      example:
+        $ref: "#/components/examples/StatusExample"
+  examples:
+    MedicineInventoryEntryExample:
+      summary: Paralen medicine inventory entry
+      description: |
+        Entry represents a medicine in the ambulance inventory
+      value:
+        id: x321ab3
+        name: Paralen
+        medicineId: 74895-paralen
+        count: 15
+    MedicineInventoryEntriesExample:
+      summary: List of medicines in given ambulance inventory
+      description: |
+        Example medicine in ambulance inventory containing 2 medicines
+      value:
+        - id: x321ab3
+          name: Paralen
+          medicineId: 460527-paralen
+          count: 15
+        - id: x321ab4
+          name: Mig 400
+          medicineId: 780907-mig-400
+          count: 25
+    MedicineOrderEntryExample:
+      summary: Paralen medicine order entry
+      description: |
+        Entry represents a medicine in the ambulance inventory
+      value:
+        id: x321ab3
+        name: Paralen
+        medicineId: 74895-paralen
+        count: 15
+        status:
+          value: Shipped
+    MedicineOrderEntriesExample:
+      summary: List of medicines in given ambulance inventory
+      description: |
+        Example medicine in ambulance inventory containing 2 medicines
+      value:
+        - id: x321ab3
+          name: Paralen
+          medicineId: 460527-paralen
+          count: 15
+          status:
+            value: Shipped
+        - id: x321ab4
+          name: Mig 400
+          medicineId: 780907-mig-400
+          count: 25
+          status:
+            value: Shipped
+        - id: x321ab5
+          name: Ibuprofin
+          medicineId: 788741-ibuprofin
+          count: 30
+          status:
+            value: To_ship
+    StatusExample:
+      summary: Order status
+      description: Status of the order
+      value:
+        value: Shipped
+    StatusListExample:
+      summary: Sample of order statuses
+      description: |
+        Example list of order statuses
+      value:
+        - value: To_ship
+        - value: Shipped
+        - value: Delivered
+        - value: Canceled
