@@ -18,6 +18,8 @@ tags:
     description: Medicine Order API
   - name: orderStatuses
     description: Medicine order statuses
+  - name: ambulances
+    description: Ambulance details
 paths:
   "/medicine-inventory/{ambulanceId}/entries":
     get:
@@ -342,6 +344,57 @@ paths:
               examples:
                 response:
                   $ref: "#/components/examples/StatusListExample"
+  "/ambulance":
+    post:
+      tags:
+        - ambulances
+      summary: Saves new ambulance definition
+      operationId: createAmbulance
+      description: Use this method to initialize new ambulance in the system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ambulance"
+            examples:
+              request-sample:
+                $ref: "#/components/examples/AmbulanceExample"
+        description: Ambulance details to store
+        required: true
+      responses:
+        "200":
+          description: >-
+            Value of stored ambulance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ambulance"
+              examples:
+                updated-response:
+                  $ref: "#/components/examples/AmbulanceExample"
+        "400":
+          description: Missing mandatory properties of input object.
+        "409":
+          description: Entry with the specified id already exists
+  "/ambulance/{ambulanceId}":
+    delete:
+      tags:
+        - ambulances
+      summary: Deletes specific ambulance
+      operationId: deleteAmbulance
+      description: Use this method to delete the specific ambulance from the system.
+      parameters:
+        - in: path
+          name: ambulanceId
+          description: pass the id of the particular ambulance
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item deleted
+        "404":
+          description: Ambulance with such ID does not exist
 components:
   schemas:
     MedicineInventoryEntry:
@@ -406,6 +459,31 @@ components:
           example: Shipped
       example:
         $ref: "#/components/examples/StatusExample"
+    Ambulance:
+      type: object
+      required: [ "id", "name", "roomNumber" ]
+      properties:
+        id:
+          type: string
+          example: dentist-warenova
+          description: Unique identifier of the ambulance
+        name:
+          type: string
+          example: Zubná ambulancia Dr. Warenová
+          description: Human readable display name of the ambulance
+        roomNumber:
+          type: string
+          example: 356 - 3.posch
+        medicineInventory:
+          type: array
+          items:
+            $ref: '#/components/schemas/MedicineInventoryEntry'
+        medicineOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/MedicineOrderEntry'
+      example:
+        $ref: "#/components/examples/AmbulanceExample"
   examples:
     MedicineInventoryEntryExample:
       summary: Paralen medicine inventory entry
@@ -477,3 +555,39 @@ components:
         - value: Shipped
         - value: Delivered
         - value: Canceled
+    AmbulanceExample:
+      summary: Sample GP ambulance
+      description: |
+        Example of GP ambulance with inventory and orders
+      value:
+        id: gp-warenova
+        name: Ambulancia všeobecného lekárstva Dr. Warenová
+        roomNumber: 356 - 3.posch
+        medicineInventory:
+          - id: x321ab3
+            name: Paralen
+            medicineId: 460527-paralen
+            count: 15
+          - id: x321ab4
+            name: Mig 400
+            medicineId: 780907-mig-400
+            count: 25
+        medicineOrders:
+          - id: x321ab3
+            name: Paralen
+            medicineId: 460527-paralen
+            count: 15
+            status:
+              value: Shipped
+          - id: x321ab4
+            name: Mig 400
+            medicineId: 780907-mig-400
+            count: 25
+            status:
+              value: Shipped
+          - id: x321ab5
+            name: Ibuprofin
+            medicineId: 788741-ibuprofin
+            count: 30
+            status:
+              value: To_ship

@@ -1,7 +1,9 @@
 internal/medicine/README.md
+internal/medicine/api_ambulances.go
 internal/medicine/api_medicine_inventory.go
 internal/medicine/api_medicine_order.go
 internal/medicine/api_order_statuses.go
+internal/medicine/model_ambulance.go
 internal/medicine/model_medicine_inventory_entry.go
 internal/medicine/model_medicine_order_entry.go
 internal/medicine/model_status.go
