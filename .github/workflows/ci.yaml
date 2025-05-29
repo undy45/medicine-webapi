@@ -42,8 +42,8 @@ jobs:
     - name: Build
       run: go build -v ./cmd/medicine-api-service
 
-    # - name: Test
-    #   run: go test -v ./...
+    - name: Test
+      run: go test -v ./...
     - name: Docker Setup QEMU
       # You may pin to the exact commit or the version.
       # uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
