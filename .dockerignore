@@ -1,0 +1,5 @@
+internal/medicine/api_*
+internal/medicine/model_*
+internal/medicine/routers.go
+build/
+deployments/
