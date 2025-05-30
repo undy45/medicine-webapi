@@ -344,6 +344,30 @@ paths:
               examples:
                 response:
                   $ref: "#/components/examples/StatusListExample"
+  "/medicine-order/statuses/{statusId}":
+    get:
+      tags:
+        - orderStatuses
+      summary: Provides the list of valid statuses for the order
+      operationId: getStatus
+      description: Get list of predefined order statuses
+      parameters:
+        - in: path
+          name: statusId
+          description: pass the id of the particular status
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the status and its valid transitions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+              examples:
+                response:
+                  $ref: "#/components/examples/StatusExample"
   "/ambulance":
     post:
       tags:
@@ -465,7 +489,7 @@ components:
         validTransitions:
           type: array
           items:
-            $ref: "#/components/schemas/Status"
+            type: integer
       example:
         $ref: "#/components/examples/StatusExample"
     Ambulance:
@@ -564,17 +588,21 @@ components:
       description: |
         Example list of order statuses
       value:
-        - value: To_ship
+        - id: 1
+          value: To_ship
           validTransitions:
-            - value: Shipped
-            - value: Canceled
-        - value: Shipped
+            - value: 2
+            - value: 4
+        - id: 2
+          value: Shipped
           validTransitions:
-            - value: Shipped
-            - value: Canceled
-        - value: Delivered
+            - value: 3
+            - value: 4
+        - id: 3
+          value: Delivered
           validTransitions: []
-        - value: Canceled
+        - id: 4
+          value: Canceled
           validTransitions: []
     AmbulanceExample:
       summary: Sample GP ambulance

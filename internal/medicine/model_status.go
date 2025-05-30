@@ -12,7 +12,11 @@ package medicine
 
 // Status - Describes status order
 type Status struct {
+
+	// Unique identifier of the status
+	Id int32 `json:"id,omitempty"`
+
 	Value string `json:"value"`
 
-	ValidTransitions []Status `json:"validTransitions,omitempty"`
+	ValidTransitions []int32 `json:"validTransitions,omitempty"`
 }

@@ -1,7 +1,6 @@
 package medicine
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -19,42 +18,8 @@ type MedicineSuite struct {
 	dbServiceMock *DbServiceMock[Ambulance]
 }
 
-func TestMedicineSuite(t *testing.T) {
+func TestMedicineInventorySuite(t *testing.T) {
 	suite.Run(t, new(MedicineSuite))
-}
-
-type DbServiceMock[DocType interface{}] struct {
-	mock.Mock
-}
-
-func (this *DbServiceMock[DocType]) CreateDocument(ctx context.Context, id string, document *DocType) error {
-	args := this.Called(ctx, id, document)
-	return args.Error(0)
-}
-
-func (this *DbServiceMock[DocType]) FindDocument(ctx context.Context, id string) (*DocType, error) {
-	args := this.Called(ctx, id)
-	return args.Get(0).(*DocType), args.Error(1)
-}
-
-func (this *DbServiceMock[DocType]) FindAllDocument(ctx context.Context) ([]*DocType, error) {
-	args := this.Called(ctx)
-	return args.Get(0).([]*DocType), args.Error(1)
-}
-
-func (this *DbServiceMock[DocType]) UpdateDocument(ctx context.Context, id string, document *DocType) error {
-	args := this.Called(ctx, id, document)
-	return args.Error(0)
-}
-
-func (this *DbServiceMock[DocType]) DeleteDocument(ctx context.Context, id string) error {
-	args := this.Called(ctx, id)
-	return args.Error(0)
-}
-
-func (this *DbServiceMock[DocType]) Disconnect(ctx context.Context) error {
-	args := this.Called(ctx)
-	return args.Error(0)
 }
 
 func (suite *MedicineSuite) SetupTest() {

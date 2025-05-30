@@ -142,6 +142,12 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			handleFunctions.MedicineOrderAPI.UpdateMedicineOrderEntry,
 		},
 		{
+			"GetStatus",
+			http.MethodGet,
+			"/api/medicine-order/statuses/:statusId",
+			handleFunctions.OrderStatusesAPI.GetStatus,
+		},
+		{
 			"GetStatuses",
 			http.MethodGet,
 			"/api/medicine-order/statuses",

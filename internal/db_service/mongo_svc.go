@@ -18,7 +18,7 @@ import (
 type DbService[DocType interface{}] interface {
 	CreateDocument(ctx context.Context, id string, document *DocType) error
 	FindDocument(ctx context.Context, id string) (*DocType, error)
-	FindAllDocument(ctx context.Context) ([]*DocType, error)
+	FindAllDocuments(ctx context.Context) ([]*DocType, error)
 	UpdateDocument(ctx context.Context, id string, document *DocType) error
 	DeleteDocument(ctx context.Context, id string) error
 	Disconnect(ctx context.Context) error
@@ -203,7 +203,7 @@ func (m *mongoSvc[DocType]) FindDocument(ctx context.Context, id string) (*DocTy
 	return document, nil
 }
 
-func (m *mongoSvc[DocType]) FindAllDocument(ctx context.Context) ([]*DocType, error) {
+func (m *mongoSvc[DocType]) FindAllDocuments(ctx context.Context) ([]*DocType, error) {
 	ctx, contextCancel := context.WithTimeout(ctx, m.Timeout)
 	defer contextCancel()
 	client, err := m.connect(ctx)
