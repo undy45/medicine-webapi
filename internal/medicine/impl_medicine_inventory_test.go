@@ -13,16 +13,16 @@ import (
 	"github.com/undy45/medicine-webapi/internal/db_service"
 )
 
-type MedicineSuite struct {
+type MedicineInventorySuite struct {
 	suite.Suite
 	dbServiceMock *DbServiceMock[Ambulance]
 }
 
 func TestMedicineInventorySuite(t *testing.T) {
-	suite.Run(t, new(MedicineSuite))
+	suite.Run(t, new(MedicineInventorySuite))
 }
 
-func (suite *MedicineSuite) SetupTest() {
+func (suite *MedicineInventorySuite) SetupTest() {
 	suite.dbServiceMock = &DbServiceMock[Ambulance]{}
 
 	// Compile time Assert that the mock is of type db_service.DbService[Ambulance]
@@ -50,7 +50,7 @@ func (suite *MedicineSuite) SetupTest() {
 		Return(nil)
 }
 
-func (suite *MedicineSuite) Test_DeleteInventory_DbService() {
+func (suite *MedicineInventorySuite) Test_DeleteInventory_DbService() {
 	// ARRANGE
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
@@ -60,7 +60,7 @@ func (suite *MedicineSuite) Test_DeleteInventory_DbService() {
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
 	}
-	ctx.Request = httptest.NewRequest("DELETE", "/ambulance/test-ambulance/entries/test-entry", nil)
+	ctx.Request = httptest.NewRequest("DELETE", "/medicine-inventory/test-ambulance/entries/test-entry", nil)
 
 	sut := implMedicineInventoryAPI{}
 
@@ -80,7 +80,7 @@ func (suite *MedicineSuite) Test_DeleteInventory_DbService() {
 	)
 }
 
-func (suite *MedicineSuite) Test_GetInventory_DbService() {
+func (suite *MedicineInventorySuite) Test_GetInventory_DbService() {
 	// ARRANGE
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
@@ -90,7 +90,7 @@ func (suite *MedicineSuite) Test_GetInventory_DbService() {
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
 	}
-	ctx.Request = httptest.NewRequest("GET", "/ambulance/test-ambulance/entries/test-entry", nil)
+	ctx.Request = httptest.NewRequest("GET", "/medicine-inventory/test-ambulance/entries/test-entry", nil)
 
 	sut := implMedicineInventoryAPI{}
 
@@ -109,7 +109,7 @@ func (suite *MedicineSuite) Test_GetInventory_DbService() {
 	suite.dbServiceMock.AssertNotCalled(suite.T(), "UpdateDocument", mock.Anything, mock.Anything, mock.Anything)
 }
 
-func (suite *MedicineSuite) Test_GetInventory_DbServiceGetAllEntries() {
+func (suite *MedicineInventorySuite) Test_GetInventory_DbServiceGetAllEntries() {
 	// ARRANGE
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
@@ -119,7 +119,7 @@ func (suite *MedicineSuite) Test_GetInventory_DbServiceGetAllEntries() {
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
 	}
-	ctx.Request = httptest.NewRequest("GET", "/ambulance/test-ambulance/entries", nil)
+	ctx.Request = httptest.NewRequest("GET", "/medicine-inventory/test-ambulance/entries", nil)
 
 	sut := implMedicineInventoryAPI{}
 
@@ -139,7 +139,7 @@ func (suite *MedicineSuite) Test_GetInventory_DbServiceGetAllEntries() {
 	suite.dbServiceMock.AssertNotCalled(suite.T(), "UpdateDocument", mock.Anything, mock.Anything, mock.Anything)
 }
 
-func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalled() {
+func (suite *MedicineInventorySuite) Test_UpdateInventory_DbServiceUpdateCalled() {
 	// ARRANGE
 	json := `{
         "id": "test-entry",
@@ -156,7 +156,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalled() {
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
 	}
-	ctx.Request = httptest.NewRequest("PUT", "/ambulance/test-ambulance/entries/test-entry", strings.NewReader(json))
+	ctx.Request = httptest.NewRequest("PUT", "/medicine-inventory/test-ambulance/entries/test-entry", strings.NewReader(json))
 
 	sut := implMedicineInventoryAPI{}
 
@@ -168,7 +168,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalled() {
 	suite.dbServiceMock.AssertCalled(suite.T(), "UpdateDocument", mock.Anything, "test-ambulance", mock.Anything)
 }
 
-func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalledWithCorrectInventory() {
+func (suite *MedicineInventorySuite) Test_UpdateInventory_DbServiceUpdateCalledWithCorrectInventory() {
 	// ARRANGE
 	json := `{
         "id": "test-entry",
@@ -185,7 +185,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalledWithCorrec
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
 	}
-	ctx.Request = httptest.NewRequest("PUT", "/ambulance/test-ambulance/entries/test-entry", strings.NewReader(json))
+	ctx.Request = httptest.NewRequest("PUT", "/medicine-inventory/test-ambulance/entries/test-entry", strings.NewReader(json))
 
 	sut := implMedicineInventoryAPI{}
 
@@ -210,7 +210,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalledWithCorrec
 	)
 }
 
-func (suite *MedicineSuite) Test_UpdateInventory_DbServiceDeleteInventoryWhenCountIsZero() {
+func (suite *MedicineInventorySuite) Test_UpdateInventory_DbServiceDeleteInventoryWhenCountIsZero() {
 	// ARRANGE
 	json := `{
         "id": "test-entry",
@@ -227,7 +227,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceDeleteInventoryWhenCou
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
 	}
-	ctx.Request = httptest.NewRequest("PUT", "/ambulance/test-ambulance/entries/test-entry", strings.NewReader(json))
+	ctx.Request = httptest.NewRequest("PUT", "/medicine-inventory/test-ambulance/entries/test-entry", strings.NewReader(json))
 
 	sut := implMedicineInventoryAPI{}
 

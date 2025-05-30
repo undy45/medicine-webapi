@@ -368,6 +368,23 @@ paths:
               examples:
                 response:
                   $ref: "#/components/examples/StatusExample"
+  "/medicine-order/initial-status":
+    get:
+      tags:
+        - orderStatuses
+      summary: Provides the initial status for the order
+      operationId: getInitialStatus
+      description: Get the initial status for the order
+      responses:
+        "200":
+          description: value of the status and its valid transitions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+              examples:
+                response:
+                  $ref: "#/components/examples/StatusExample"
   "/ambulance":
     post:
       tags:

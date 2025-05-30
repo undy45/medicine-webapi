@@ -16,6 +16,10 @@ import (
 
 type OrderStatusesAPI interface {
 
+	// GetInitialStatus Get /api/medicine-order/initial-status
+	// Provides the initial status for the order
+	GetInitialStatus(c *gin.Context)
+
 	// GetStatus Get /api/medicine-order/statuses/:statusId
 	// Provides the list of valid statuses for the order
 	GetStatus(c *gin.Context)

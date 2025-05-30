@@ -13,14 +13,20 @@ func NewOrderStatusesApi() OrderStatusesAPI {
 	return &implOrderStatusesApi{}
 }
 
+func (o implOrderStatusesApi) GetInitialStatus(c *gin.Context) {
+	utilsStatus := implUtilsOrderStatuses{}
+	responseObject := utilsStatus.GetInitialStatus(c)
+	if responseObject != nil {
+		c.JSON(http.StatusOK, responseObject)
+	} else {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
+}
+
 func (o implOrderStatusesApi) GetStatus(c *gin.Context) {
 	statusId := c.Param("statusId")
-	db := HandleConnectionToCollection[Status](c, "db_service_status")
-	responseObject, err := db.FindDocument(c, statusId)
-	if err != nil {
-		HandleRetrievalError(c, err)
-		return
-	}
+	utilsStatus := implUtilsOrderStatuses{}
+	responseObject := utilsStatus.GetStatus(c, statusId)
 	if responseObject != nil {
 		c.JSON(http.StatusOK, responseObject)
 	} else {
@@ -29,12 +35,8 @@ func (o implOrderStatusesApi) GetStatus(c *gin.Context) {
 }
 
 func (o implOrderStatusesApi) GetStatuses(c *gin.Context) {
-	db := HandleConnectionToCollection[Status](c, "db_service_status")
-	responseObject, err := db.FindAllDocuments(c)
-	if err != nil {
-		HandleRetrievalError(c, err)
-		return
-	}
+	utilsStatus := implUtilsOrderStatuses{}
+	responseObject := utilsStatus.GetStatuses(c)
 	if responseObject != nil {
 		c.JSON(http.StatusOK, responseObject)
 	} else {

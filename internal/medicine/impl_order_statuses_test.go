@@ -66,6 +66,31 @@ func (suite *OrderStatusesSuite) SetupTest() {
 		)
 }
 
+func (suite *OrderStatusesSuite) Test_GetInitialStatus_DbService() {
+	// ARRANGE
+	gin.SetMode(gin.TestMode)
+	recorder := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(recorder)
+	ctx.Set("db_service_status", suite.dbServiceMock)
+	ctx.Request = httptest.NewRequest("GET", "/medicine-order/initial-status", nil)
+
+	sut := implOrderStatusesApi{}
+
+	// ACT
+	sut.GetInitialStatus(ctx)
+
+	// ASSERT
+	suite.Equal(http.StatusOK, recorder.Code)
+	var respObj map[string]interface{}
+	err := json.Unmarshal(recorder.Body.Bytes(), &respObj)
+	suite.Require().NoError(err)
+	checkStatus(suite, respObj, &Status{
+		Id:               1,
+		Value:            "To_ship",
+		ValidTransitions: []int32{2, 4},
+	})
+}
+
 func (suite *OrderStatusesSuite) Test_GetStatus_DbService() {
 	// ARRANGE
 	gin.SetMode(gin.TestMode)
