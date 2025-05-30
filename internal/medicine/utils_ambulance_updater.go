@@ -13,66 +13,11 @@ type ambulanceUpdater = func(
 ) (updatedAmbulance *Ambulance, responseContent interface{}, status int)
 
 func updateAmbulanceFunc(ctx *gin.Context, updater ambulanceUpdater) {
-	value, exists := ctx.Get("db_service")
-	if !exists {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			gin.H{
-				"status":  "Internal Server Error",
-				"message": "db_service not found",
-				"error":   "db_service not found",
-			})
-		return
-	}
-
-	db, ok := value.(db_service.DbService[Ambulance])
-	if !ok {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			gin.H{
-				"status":  "Internal Server Error",
-				"message": "db_service context is not of type db_service.DbService",
-				"error":   "cannot cast db_service context to db_service.DbService",
-			})
-		return
-	}
-
 	ambulanceId := ctx.Param("ambulanceId")
-
+	db := HandleConnectionToCollection[Ambulance](ctx, "db_service_ambulance")
 	ambulance, err := db.FindDocument(ctx, ambulanceId)
-
-	switch err {
-	case nil:
-		// continue
-	case db_service.ErrNotFound:
-		ctx.JSON(
-			http.StatusNotFound,
-			gin.H{
-				"status":  "Not Found",
-				"message": "Ambulance not found",
-				"error":   err.Error(),
-			},
-		)
-		return
-	default:
-		ctx.JSON(
-			http.StatusBadGateway,
-			gin.H{
-				"status":  "Bad Gateway",
-				"message": "Failed to load ambulance from database",
-				"error":   err.Error(),
-			})
-		return
-	}
-
-	if !ok {
-		ctx.JSON(
-			http.StatusInternalServerError,
-			gin.H{
-				"status":  "Internal Server Error",
-				"message": "Failed to cast ambulance from database",
-				"error":   "Failed to cast ambulance from database",
-			})
+	if err != nil {
+		HandleRetrievalError(ctx, err)
 		return
 	}
 

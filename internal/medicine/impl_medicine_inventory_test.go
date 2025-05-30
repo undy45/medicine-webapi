@@ -37,6 +37,11 @@ func (this *DbServiceMock[DocType]) FindDocument(ctx context.Context, id string)
 	return args.Get(0).(*DocType), args.Error(1)
 }
 
+func (this *DbServiceMock[DocType]) FindAllDocument(ctx context.Context) ([]*DocType, error) {
+	args := this.Called(ctx)
+	return args.Get(0).([]*DocType), args.Error(1)
+}
+
 func (this *DbServiceMock[DocType]) UpdateDocument(ctx context.Context, id string, document *DocType) error {
 	args := this.Called(ctx, id, document)
 	return args.Error(0)
@@ -74,18 +79,18 @@ func (suite *MedicineSuite) SetupTest() {
 			},
 			nil,
 		)
+
+	suite.dbServiceMock.
+		On("UpdateDocument", mock.Anything, mock.Anything, mock.Anything).
+		Return(nil)
 }
 
 func (suite *MedicineSuite) Test_DeleteInventory_DbService() {
 	// ARRANGE
-	suite.dbServiceMock.
-		On("UpdateDocument", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil)
-
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(recorder)
-	ctx.Set("db_service", suite.dbServiceMock)
+	ctx.Set("db_service_ambulance", suite.dbServiceMock)
 	ctx.Params = []gin.Param{
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
@@ -112,14 +117,10 @@ func (suite *MedicineSuite) Test_DeleteInventory_DbService() {
 
 func (suite *MedicineSuite) Test_GetInventory_DbService() {
 	// ARRANGE
-	suite.dbServiceMock.
-		On("UpdateDocument", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil)
-
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(recorder)
-	ctx.Set("db_service", suite.dbServiceMock)
+	ctx.Set("db_service_ambulance", suite.dbServiceMock)
 	ctx.Params = []gin.Param{
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
@@ -145,14 +146,10 @@ func (suite *MedicineSuite) Test_GetInventory_DbService() {
 
 func (suite *MedicineSuite) Test_GetInventory_DbServiceGetAllEntries() {
 	// ARRANGE
-	suite.dbServiceMock.
-		On("UpdateDocument", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil)
-
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(recorder)
-	ctx.Set("db_service", suite.dbServiceMock)
+	ctx.Set("db_service_ambulance", suite.dbServiceMock)
 	ctx.Params = []gin.Param{
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
@@ -179,10 +176,6 @@ func (suite *MedicineSuite) Test_GetInventory_DbServiceGetAllEntries() {
 
 func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalled() {
 	// ARRANGE
-	suite.dbServiceMock.
-		On("UpdateDocument", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil)
-
 	json := `{
         "id": "test-entry",
         "name": "test-name",
@@ -193,7 +186,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalled() {
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(recorder)
-	ctx.Set("db_service", suite.dbServiceMock)
+	ctx.Set("db_service_ambulance", suite.dbServiceMock)
 	ctx.Params = []gin.Param{
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
@@ -212,10 +205,6 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalled() {
 
 func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalledWithCorrectInventory() {
 	// ARRANGE
-	suite.dbServiceMock.
-		On("UpdateDocument", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil)
-
 	json := `{
         "id": "test-entry",
         "name": "test-name",
@@ -226,7 +215,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalledWithCorrec
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(recorder)
-	ctx.Set("db_service", suite.dbServiceMock)
+	ctx.Set("db_service_ambulance", suite.dbServiceMock)
 	ctx.Params = []gin.Param{
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},
@@ -258,10 +247,6 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceUpdateCalledWithCorrec
 
 func (suite *MedicineSuite) Test_UpdateInventory_DbServiceDeleteInventoryWhenCountIsZero() {
 	// ARRANGE
-	suite.dbServiceMock.
-		On("UpdateDocument", mock.Anything, mock.Anything, mock.Anything).
-		Return(nil)
-
 	json := `{
         "id": "test-entry",
         "name": "test-name",
@@ -272,7 +257,7 @@ func (suite *MedicineSuite) Test_UpdateInventory_DbServiceDeleteInventoryWhenCou
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(recorder)
-	ctx.Set("db_service", suite.dbServiceMock)
+	ctx.Set("db_service_ambulance", suite.dbServiceMock)
 	ctx.Params = []gin.Param{
 		{Key: "ambulanceId", Value: "test-ambulance"},
 		{Key: "entryId", Value: "test-entry"},

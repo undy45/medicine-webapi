@@ -13,4 +13,6 @@ package medicine
 // Status - Describes status order
 type Status struct {
 	Value string `json:"value"`
+
+	ValidTransitions []Status `json:"validTransitions,omitempty"`
 }

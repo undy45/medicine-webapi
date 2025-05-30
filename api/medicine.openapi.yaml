@@ -454,9 +454,18 @@ components:
       required:
         - value
       properties:
+        id:
+          type: integer
+          format: int32
+          example: 2
+          description: Unique identifier of the status
         value:
           type: string
           example: Shipped
+        validTransitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Status"
       example:
         $ref: "#/components/examples/StatusExample"
     Ambulance:
@@ -545,16 +554,28 @@ components:
       summary: Order status
       description: Status of the order
       value:
+        id: 2
         value: Shipped
+        validTransitions:
+          - value: Delivered
+          - value: Canceled
     StatusListExample:
       summary: Sample of order statuses
       description: |
         Example list of order statuses
       value:
         - value: To_ship
+          validTransitions:
+            - value: Shipped
+            - value: Canceled
         - value: Shipped
+          validTransitions:
+            - value: Shipped
+            - value: Canceled
         - value: Delivered
+          validTransitions: []
         - value: Canceled
+          validTransitions: []
     AmbulanceExample:
       summary: Sample GP ambulance
       description: |

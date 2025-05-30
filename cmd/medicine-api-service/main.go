@@ -36,12 +36,23 @@ func main() {
 	engine.Use(corsMiddleware)
 
 	// setup context update  middleware
-	dbService := db_service.NewMongoService[medicine.Ambulance](db_service.MongoServiceConfig{})
-	defer dbService.Disconnect(context.Background())
+	ambulanceSvc := db_service.NewMongoService[medicine.Ambulance](db_service.MongoServiceConfig{
+		Collection: "ambulance",
+	})
+	defer ambulanceSvc.Disconnect(context.Background())
+	statusSvc := db_service.NewMongoService[medicine.Status](db_service.MongoServiceConfig{
+		Collection: "status",
+	})
+	defer statusSvc.Disconnect(context.Background())
 	engine.Use(func(ctx *gin.Context) {
-		ctx.Set("db_service", dbService)
+		ctx.Set("db_service_ambulance", ambulanceSvc)
+		ctx.Set("db_service_status", statusSvc)
 		ctx.Next()
 	})
+	//engine.Use(func(ctx *gin.Context) {
+	//	ctx.Set("db_service", dbService)
+	//	ctx.Next()
+	//})
 	// request routings
 	handleFunctions := &medicine.ApiHandleFunctions{
 		OrderStatusesAPI:     medicine.NewOrderStatusesApi(),

@@ -15,7 +15,7 @@ func NewAmbulancesAPI() AmbulancesAPI {
 }
 
 func (o implAmbulancesAPI) CreateAmbulance(c *gin.Context) {
-	value, exists := c.Get("db_service")
+	value, exists := c.Get("db_service_ambulance")
 	if !exists {
 		c.JSON(
 			http.StatusInternalServerError,
@@ -86,7 +86,7 @@ func (o implAmbulancesAPI) CreateAmbulance(c *gin.Context) {
 }
 
 func (o implAmbulancesAPI) DeleteAmbulance(c *gin.Context) {
-	value, exists := c.Get("db_service")
+	value, exists := c.Get("db_service_ambulance")
 	if !exists {
 		c.JSON(
 			http.StatusInternalServerError,
