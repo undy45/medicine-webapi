@@ -37,7 +37,7 @@ if (databases.includes(database)) {
 // initialize
 // create database and collection
 const db = connection.getDB(database)
-if (collections.includes(collection)) {
+if (!collections.includes(collection)) {
     db.createCollection(collection)
 
     // create indexes
@@ -57,7 +57,7 @@ if (collections.includes(collection)) {
         print(`Error when writing the data: ${result.errmsg}`)
     }
 }
-if (collections.includes("status")) {
+if (!collections.includes("status")) {
     db.createCollection("status")
 
     // create indexes
