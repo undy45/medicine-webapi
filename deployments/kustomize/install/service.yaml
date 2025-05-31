@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ee-medicine-webapi
+spec:
+  selector:
+    pod: ee-medicine-webapi-label
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: webapi-port
