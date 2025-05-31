@@ -24,6 +24,7 @@ while(true) {
 
 // if database and collection exists, exit with success - already initialized
 const databases = connection.getDBNames()
+let collections = [];
 if (databases.includes(database)) {
     const dbInstance = connection.getDB(database)
     collections = dbInstance.getCollectionNames()
