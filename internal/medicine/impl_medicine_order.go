@@ -1,7 +1,6 @@
 package medicine
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
@@ -208,8 +207,7 @@ func (o implMedicineOrderAPI) UpdateMedicineOrderEntry(c *gin.Context) {
 			return ambulance, ambulance.MedicineOrders[entryIndx], http.StatusOK
 		}
 		currentStatus := ambulance.MedicineOrders[entryIndx].Status
-		fmt.Printf("ValidTransitions: %#v (%T), Status.Id: %v (%T)\n", currentStatus.ValidTransitions, currentStatus.ValidTransitions, entry.Status.Id, entry.Status.Id)
-		if !slices.Contains(currentStatus.ValidTransitions, entry.Status.Id) {
+		if !slices.Contains(currentStatus.ValidTransitions, entry.Status.Id) && entry.Status.Id != currentStatus.Id {
 			return nil, gin.H{
 				"status":  http.StatusBadRequest,
 				"message": "Changed status is not valid for current order state",
