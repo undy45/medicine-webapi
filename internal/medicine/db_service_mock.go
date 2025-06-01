@@ -9,12 +9,12 @@ type DbServiceMock[DocType interface{}] struct {
 	mock.Mock
 }
 
-func (this *DbServiceMock[DocType]) CreateDocument(ctx context.Context, id string, document *DocType) error {
+func (this *DbServiceMock[DocType]) CreateDocument(ctx context.Context, id any, document *DocType) error {
 	args := this.Called(ctx, id, document)
 	return args.Error(0)
 }
 
-func (this *DbServiceMock[DocType]) FindDocument(ctx context.Context, id string) (*DocType, error) {
+func (this *DbServiceMock[DocType]) FindDocument(ctx context.Context, id any) (*DocType, error) {
 	args := this.Called(ctx, id)
 	return args.Get(0).(*DocType), args.Error(1)
 }
@@ -24,12 +24,12 @@ func (this *DbServiceMock[DocType]) FindAllDocuments(ctx context.Context) ([]*Do
 	return args.Get(0).([]*DocType), args.Error(1)
 }
 
-func (this *DbServiceMock[DocType]) UpdateDocument(ctx context.Context, id string, document *DocType) error {
+func (this *DbServiceMock[DocType]) UpdateDocument(ctx context.Context, id any, document *DocType) error {
 	args := this.Called(ctx, id, document)
 	return args.Error(0)
 }
 
-func (this *DbServiceMock[DocType]) DeleteDocument(ctx context.Context, id string) error {
+func (this *DbServiceMock[DocType]) DeleteDocument(ctx context.Context, id any) error {
 	args := this.Called(ctx, id)
 	return args.Error(0)
 }

@@ -56,7 +56,7 @@ func (suite *MedicineOrderSuite) SetupTest() {
 		)
 
 	suite.dbStatusServiceMock.
-		On("FindDocument", mock.Anything, "1").
+		On("FindDocument", mock.Anything, 1).
 		Return(
 			&Status{
 				Id:               1,
@@ -65,7 +65,7 @@ func (suite *MedicineOrderSuite) SetupTest() {
 			},
 			nil,
 		).
-		On("FindDocument", mock.Anything, "2").
+		On("FindDocument", mock.Anything, 2).
 		Return(
 			&Status{
 				Id:               2,
@@ -74,7 +74,7 @@ func (suite *MedicineOrderSuite) SetupTest() {
 			},
 			nil,
 		).
-		On("FindDocument", mock.Anything, "3").
+		On("FindDocument", mock.Anything, 3).
 		Return(
 			&Status{
 				Id:               3,
@@ -83,7 +83,7 @@ func (suite *MedicineOrderSuite) SetupTest() {
 			},
 			nil,
 		).
-		On("FindDocument", mock.Anything, "4").
+		On("FindDocument", mock.Anything, 4).
 		Return(
 			&Status{
 				Id:               4,
