@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
+	"reflect"
 	"slices"
 )
 
@@ -169,17 +170,17 @@ func (o implMedicineOrderAPI) UpdateMedicineOrderEntry(c *gin.Context) {
 			ambulance.MedicineOrders[entryIndx].Count = entry.Count
 		}
 
-		if entry.MedicineId != "" {
+		if entry.MedicineId != "" && entry.MedicineId != ambulance.MedicineOrders[entryIndx].MedicineId {
 			return nil, gin.H{
 				"status":  http.StatusBadRequest,
 				"message": "Cannot update MedicineId in existing order",
 			}, http.StatusBadRequest
 		}
 
-		if entry.Id != "" {
+		if entry.Id != "" && entry.Id != ambulance.MedicineOrders[entryIndx].Id {
 			return nil, gin.H{
 				"status":  http.StatusBadRequest,
-				"message": "Cannot update MedicineId in existing order",
+				"message": "Cannot update Id in existing order",
 			}, http.StatusBadRequest
 		}
 
@@ -187,12 +188,22 @@ func (o implMedicineOrderAPI) UpdateMedicineOrderEntry(c *gin.Context) {
 			ambulance.MedicineOrders[entryIndx].Name = entry.Name
 		}
 
-		if entry.Status.ValidTransitions != nil || entry.Status.Value != "" {
+		currentValidTransitions := ambulance.MedicineOrders[entryIndx].Status.ValidTransitions
+		if entry.Status.ValidTransitions != nil && !reflect.DeepEqual(entry.Status.ValidTransitions, currentValidTransitions) {
 			return nil, gin.H{
 				"status":  http.StatusBadRequest,
-				"message": "Can only update status id to change state",
+				"message": "Can only update status id to change state (Trying to update ValidTransitions)",
 			}, http.StatusBadRequest
 		}
+
+		currentValue := ambulance.MedicineOrders[entryIndx].Status.Value
+		if entry.Status.ValidTransitions != nil && !reflect.DeepEqual(entry.Status.Value, currentValue) {
+			return nil, gin.H{
+				"status":  http.StatusBadRequest,
+				"message": "Can only update status id to change state (Trying to update Value)",
+			}, http.StatusBadRequest
+		}
+
 		if entry.Status.Id == 0 {
 			return ambulance, ambulance.MedicineOrders[entryIndx], http.StatusOK
 		}
