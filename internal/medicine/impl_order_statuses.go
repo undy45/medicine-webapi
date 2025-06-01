@@ -2,6 +2,7 @@ package medicine
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +27,8 @@ func (o implOrderStatusesApi) GetInitialStatus(c *gin.Context) {
 func (o implOrderStatusesApi) GetStatus(c *gin.Context) {
 	statusId := c.Param("statusId")
 	utilsStatus := implUtilsOrderStatuses{}
-	responseObject := utilsStatus.GetStatus(c, statusId)
+	statusIdInt, _ := strconv.Atoi(statusId)
+	responseObject := utilsStatus.GetStatus(c, statusIdInt)
 	if responseObject != nil {
 		c.JSON(http.StatusOK, responseObject)
 	} else {

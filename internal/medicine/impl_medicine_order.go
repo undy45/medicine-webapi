@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	"slices"
-	"strconv"
 )
 
 type implMedicineOrderAPI struct {
@@ -56,8 +55,8 @@ func (o implMedicineOrderAPI) CreateMedicineOrderEntry(c *gin.Context) {
 
 		ambulance.MedicineOrders = append(ambulance.MedicineOrders, entry)
 		// entry was copied by value return reconciled value from the list
-		entryIndx := slices.IndexFunc(ambulance.MedicineOrders, func(waiting MedicineOrderEntry) bool {
-			return entry.Id == waiting.Id
+		entryIndx := slices.IndexFunc(ambulance.MedicineOrders, func(orderEntry MedicineOrderEntry) bool {
+			return entry.Id == orderEntry.Id
 		})
 		if entryIndx < 0 {
 			return nil, gin.H{
@@ -206,9 +205,35 @@ func (o implMedicineOrderAPI) UpdateMedicineOrderEntry(c *gin.Context) {
 			}, http.StatusBadRequest
 		}
 		statusService := implUtilsOrderStatuses{}
-		changedStatus := statusService.GetStatus(c, strconv.FormatInt(int64(entry.Status.Id), 10))
+		changedStatus := statusService.GetStatus(c, int(entry.Status.Id))
 		ambulance.MedicineOrders[entryIndx].Status = *changedStatus
+		HandleIfDelivered(ambulance, ambulance.MedicineOrders[entryIndx])
 
 		return ambulance, ambulance.MedicineOrders[entryIndx], http.StatusOK
 	})
+}
+
+func HandleIfDelivered(ambulance *Ambulance, entry MedicineOrderEntry) {
+	if entry.Status.Value != "Delivered" {
+		return
+	}
+	foundIndx := slices.IndexFunc(ambulance.MedicineInventory, func(order MedicineInventoryEntry) bool {
+		return entry.Id == order.Id || entry.MedicineId == order.MedicineId
+	})
+	inventoryEntry := ConvertOrderToInventoryEntry(entry)
+	if foundIndx >= 0 {
+		ambulance.MedicineInventory[foundIndx].Count += entry.Count
+	} else {
+		ambulance.MedicineInventory = append(ambulance.MedicineInventory, inventoryEntry)
+	}
+
+}
+
+func ConvertOrderToInventoryEntry(order MedicineOrderEntry) MedicineInventoryEntry {
+	return MedicineInventoryEntry{
+		Id:         order.Id,
+		MedicineId: order.MedicineId,
+		Name:       order.Name,
+		Count:      order.Count,
+	}
 }

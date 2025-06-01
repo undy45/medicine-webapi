@@ -16,11 +16,11 @@ import (
 )
 
 type DbService[DocType interface{}] interface {
-	CreateDocument(ctx context.Context, id string, document *DocType) error
-	FindDocument(ctx context.Context, id string) (*DocType, error)
+	CreateDocument(ctx context.Context, id any, document *DocType) error
+	FindDocument(ctx context.Context, id any) (*DocType, error)
 	FindAllDocuments(ctx context.Context) ([]*DocType, error)
-	UpdateDocument(ctx context.Context, id string, document *DocType) error
-	DeleteDocument(ctx context.Context, id string) error
+	UpdateDocument(ctx context.Context, id any, document *DocType) error
+	DeleteDocument(ctx context.Context, id any) error
 	Disconnect(ctx context.Context) error
 }
 
@@ -69,11 +69,11 @@ func NewMongoService[DocType interface{}](config MongoServiceConfig) DbService[D
 	}
 
 	if svc.UserName == "" {
-		svc.UserName = enviro("MEDICINE_API_MONGODB_USERNAME", "")
+		svc.UserName = enviro("MEDICINE_API_MONGODB_USERNAME", "root")
 	}
 
 	if svc.Password == "" {
-		svc.Password = enviro("MEDICINE_API_MONGODB_PASSWORD", "")
+		svc.Password = enviro("MEDICINE_API_MONGODB_PASSWORD", "neUhaDnes")
 	}
 
 	if svc.DbName == "" {
@@ -156,7 +156,7 @@ func (m *mongoSvc[DocType]) Disconnect(ctx context.Context) error {
 	return nil
 }
 
-func (m *mongoSvc[DocType]) CreateDocument(ctx context.Context, id string, document *DocType) error {
+func (m *mongoSvc[DocType]) CreateDocument(ctx context.Context, id any, document *DocType) error {
 	ctx, contextCancel := context.WithTimeout(ctx, m.Timeout)
 	defer contextCancel()
 	client, err := m.connect(ctx)
@@ -179,7 +179,7 @@ func (m *mongoSvc[DocType]) CreateDocument(ctx context.Context, id string, docum
 	return err
 }
 
-func (m *mongoSvc[DocType]) FindDocument(ctx context.Context, id string) (*DocType, error) {
+func (m *mongoSvc[DocType]) FindDocument(ctx context.Context, id any) (*DocType, error) {
 	ctx, contextCancel := context.WithTimeout(ctx, m.Timeout)
 	defer contextCancel()
 	client, err := m.connect(ctx)
@@ -234,7 +234,7 @@ func (m *mongoSvc[DocType]) FindAllDocuments(ctx context.Context) ([]*DocType, e
 	return documents, nil
 }
 
-func (m *mongoSvc[DocType]) UpdateDocument(ctx context.Context, id string, document *DocType) error {
+func (m *mongoSvc[DocType]) UpdateDocument(ctx context.Context, id any, document *DocType) error {
 	ctx, contextCancel := context.WithTimeout(ctx, m.Timeout)
 	defer contextCancel()
 	client, err := m.connect(ctx)
@@ -255,7 +255,7 @@ func (m *mongoSvc[DocType]) UpdateDocument(ctx context.Context, id string, docum
 	return err
 }
 
-func (m *mongoSvc[DocType]) DeleteDocument(ctx context.Context, id string) error {
+func (m *mongoSvc[DocType]) DeleteDocument(ctx context.Context, id any) error {
 	ctx, contextCancel := context.WithTimeout(ctx, m.Timeout)
 	defer contextCancel()
 	client, err := m.connect(ctx)
