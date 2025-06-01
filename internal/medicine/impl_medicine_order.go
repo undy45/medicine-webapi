@@ -39,6 +39,9 @@ func (o implMedicineOrderAPI) CreateMedicineOrderEntry(c *gin.Context) {
 		}
 
 		conflictIndx := slices.IndexFunc(ambulance.MedicineOrders, func(order MedicineOrderEntry) bool {
+			if len(order.Status.ValidTransitions) != 0 {
+				return false
+			}
 			return entry.Id == order.Id || entry.MedicineId == order.MedicineId
 		})
 
